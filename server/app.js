@@ -6,7 +6,11 @@ const authRouter = require('./routes/api/auth');
 const postRouter = require('./routes/api/post');
 const profileRouter = require('./routes/api/profile');
 
-connectToMongo();
+const dbConnection = async () => {
+	await connectToMongo();
+};
+
+dbConnection();
 
 // Init Middleware
 app.use(express.json({ extended: false }));
