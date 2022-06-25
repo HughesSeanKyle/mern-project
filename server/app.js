@@ -8,6 +8,9 @@ const profileRouter = require('./routes/api/profile');
 
 connectToMongo();
 
+// Init Middleware
+app.use(express.json({ extended: false }));
+
 // Define Routes
 /*
 	Reference this for restful route guide 
