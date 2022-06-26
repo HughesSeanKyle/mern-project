@@ -1,22 +1,16 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-// assign mongoose promise library and connect to database
-mongoose.Promise = global.Promise;
-
-const connectToMongo = async () => {
+const connectToMongo = () => {
 	try {
 		// Connect to the MongoDB cluster
-		await mongoose.connect(
-			process.env.MONGO_DB_URI,
-			{
+		mongoose
+			.connect(process.env.MONGO_DB_URI, {
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
-				useCreateIndex: true,
-				useFindAndModify: false,
-			},
-			() => console.log(' Mongoose is connected')
-		);
+			})
+			.then(() => console.log('connection successful'))
+			.catch((err) => console.log(err));
 	} catch (e) {
 		console.log(`Database connection error: ${err.message}`);
 	}

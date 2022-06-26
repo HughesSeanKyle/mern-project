@@ -1,16 +1,10 @@
 const express = require('express');
 const app = express();
-const connectToMongo = require('./config/db');
+const connectToMongo = require('./config/db')();
 const userRouter = require('./routes/api/users');
 const authRouter = require('./routes/api/auth');
 const postRouter = require('./routes/api/post');
 const profileRouter = require('./routes/api/profile');
-
-const dbConnection = async () => {
-	await connectToMongo();
-};
-
-dbConnection();
 
 // Init Middleware
 app.use(express.json({ extended: false }));

@@ -36,10 +36,15 @@ router.post(
 
 		const { name, email, password } = req.body;
 
+		/*
+            *** Possible solution to buffer timeout issue and explanation
+            - https://dev.to/arunkc/solve-mongooseerror-operation-x-find-buffering-timed-out-after-10000ms-3d3j
+        */
 		try {
 			// ** Later -> Register -> get code -> Enter -> then logged in
 			// Check if user already exists
 			let user = await User.findOne({ email: email });
+			console.log('Found user', user);
 
 			if (user) {
 				res.status(400).json({ errors: [{ msg: 'User already exists' }] });
@@ -53,12 +58,14 @@ router.post(
 			});
 
 			// Create new instance - must be persisted to db
-			user = new User({
+			user = await new User({
 				name: name,
 				email: email,
 				avatar: avatar,
 				password: password,
 			});
+
+			console.log('user L68', user);
 
 			// Encrypt password (bcrypt)
 			// // salt rounds to do hashing with
