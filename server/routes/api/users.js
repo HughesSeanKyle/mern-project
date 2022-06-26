@@ -78,7 +78,7 @@ router.post(
 				// Return jsonWebtoken
 				// // Reason for jsonWebtoken => When user registers they are logged in right away
 
-				res.send('User registered successfully!');
+				res.status(200).json({ data: 'User registered successfully!' });
 			}
 		} catch (err) {
 			console.error(err.message);
