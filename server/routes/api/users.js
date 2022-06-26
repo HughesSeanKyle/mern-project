@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { validationResult, check } = require('express-validator');
 const gravatar = require('gravatar');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { validationResult, check } = require('express-validator');
 
 const User = require('../../models/User');
 
@@ -76,11 +77,30 @@ router.post(
 			user.password = await bcrypt.hash(password, salt);
 
 			// persist to db
+			// // Produces promise which will provide user id
+			// // Mongodb = _id but mongoose = id
 			await user.save();
+
 			// Return jsonWebtoken
 			// // Reason for jsonWebtoken => When user registers they are logged in right away
+			// // Create payload
+			// // Can add other info in here. See AWS cognito payload
+			const payload = {
+				user: {
+					id: user.id,
+				},
+			};
 
-			res.status(200).json({ data: 'User registered successfully!' });
+			// Set to 3600 when deployed. 360000 for testing only
+			jwt.sign(
+				payload,
+				process.env.JWT_SECRET,
+				{ expiresIn: 360000 },
+				(err, token) => {
+					if (err) throw err;
+					res.status(200).json({ token: token });
+				}
+			);
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send('Server Error');
