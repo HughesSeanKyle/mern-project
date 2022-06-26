@@ -46,40 +46,41 @@ router.post(
 			let user = await User.findOne({ email: email });
 
 			if (user) {
-				res.status(400).json({ errors: [{ msg: 'User already exists' }] });
-			} else {
-				// Get users gravatar
-				const avatar = gravatar.url(email, {
-					// specify requirements for avatar
-					s: '200',
-					r: 'pg',
-					d: 'mm',
-				});
-
-				// Create new instance - must be persisted to db
-				user = await new User({
-					name: name,
-					email: email,
-					avatar: avatar,
-					password: password,
-				});
-
-				console.log('user L68', user);
-
-				// Encrypt password (bcrypt)
-				// // salt rounds to do hashing with
-				const salt = await bcrypt.genSalt(10);
-
-				// // hash password from req.body and save to instance of user
-				user.password = await bcrypt.hash(password, salt);
-
-				// persist to db
-				await user.save();
-				// Return jsonWebtoken
-				// // Reason for jsonWebtoken => When user registers they are logged in right away
-
-				res.status(200).json({ data: 'User registered successfully!' });
+				return res
+					.status(400)
+					.json({ errors: [{ msg: 'User already exists' }] });
 			}
+			// Get users gravatar
+			const avatar = gravatar.url(email, {
+				// specify requirements for avatar
+				s: '200',
+				r: 'pg',
+				d: 'mm',
+			});
+
+			// Create new instance - must be persisted to db
+			user = await new User({
+				name: name,
+				email: email,
+				avatar: avatar,
+				password: password,
+			});
+
+			console.log('user L68', user);
+
+			// Encrypt password (bcrypt)
+			// // salt rounds to do hashing with
+			const salt = await bcrypt.genSalt(10);
+
+			// // hash password from req.body and assign to instance.pwProp of user
+			user.password = await bcrypt.hash(password, salt);
+
+			// persist to db
+			await user.save();
+			// Return jsonWebtoken
+			// // Reason for jsonWebtoken => When user registers they are logged in right away
+
+			res.status(200).json({ data: 'User registered successfully!' });
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send('Server Error');
