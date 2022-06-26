@@ -6,6 +6,7 @@ const connectToMongo = () => {
 		// Connect to the MongoDB cluster
 		mongoose
 			.connect(process.env.MONGO_DB_URI, {
+				dbName: 'newDatabaseForFun',
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
 			})

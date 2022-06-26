@@ -40,6 +40,7 @@ router.post(
             *** Possible solution to buffer timeout issue and explanation
             - https://dev.to/arunkc/solve-mongooseerror-operation-x-find-buffering-timed-out-after-10000ms-3d3j
         */
+		// EVERYTHING in this try statement must eventually be moved to its own module. The try/catch moved to the module as well.
 		try {
 			// ** Later -> Register -> get code -> Enter -> then logged in
 			// Check if user already exists
@@ -73,6 +74,9 @@ router.post(
 
 			// // hash password from req.body and save to instance of user
 			user.password = await bcrypt.hash(password, salt);
+
+			// persist to db
+			await user.save();
 			// Return jsonWebtoken
 			// // Reason for jsonWebtoken => When user registers they are logged in right away
 
