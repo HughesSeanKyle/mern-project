@@ -25,7 +25,6 @@ router.post(
 		),
 	],
 	async (req, res) => {
-		console.log('req.body', req.body);
 		// Pass req object
 		const errors = validationResult(req);
 		// Handle bad request
@@ -45,42 +44,42 @@ router.post(
 			// ** Later -> Register -> get code -> Enter -> then logged in
 			// Check if user already exists
 			let user = await User.findOne({ email: email });
-			console.log('Found user', user);
 
 			if (user) {
 				res.status(400).json({ errors: [{ msg: 'User already exists' }] });
+			} else {
+				// Get users gravatar
+				const avatar = gravatar.url(email, {
+					// specify requirements for avatar
+					s: '200',
+					r: 'pg',
+					d: 'mm',
+				});
+
+				// Create new instance - must be persisted to db
+				user = await new User({
+					name: name,
+					email: email,
+					avatar: avatar,
+					password: password,
+				});
+
+				console.log('user L68', user);
+
+				// Encrypt password (bcrypt)
+				// // salt rounds to do hashing with
+				const salt = await bcrypt.genSalt(10);
+
+				// // hash password from req.body and save to instance of user
+				user.password = await bcrypt.hash(password, salt);
+
+				// persist to db
+				await user.save();
+				// Return jsonWebtoken
+				// // Reason for jsonWebtoken => When user registers they are logged in right away
+
+				res.send('User registered successfully!');
 			}
-			// Get users gravatar
-			const avatar = gravatar.url(email, {
-				// specify requirements for avatar
-				s: '200',
-				r: 'pg',
-				d: 'mm',
-			});
-
-			// Create new instance - must be persisted to db
-			user = await new User({
-				name: name,
-				email: email,
-				avatar: avatar,
-				password: password,
-			});
-
-			console.log('user L68', user);
-
-			// Encrypt password (bcrypt)
-			// // salt rounds to do hashing with
-			const salt = await bcrypt.genSalt(10);
-
-			// // hash password from req.body and save to instance of user
-			user.password = await bcrypt.hash(password, salt);
-
-			// persist to db
-			await user.save();
-			// Return jsonWebtoken
-			// // Reason for jsonWebtoken => When user registers they are logged in right away
-
-			res.send('User registered successfully!');
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send('Server Error');
