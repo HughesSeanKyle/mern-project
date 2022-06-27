@@ -1,14 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../../middleware/auth');
+const { findById } = require('../../models/User');
+
+const User = require('../../models/User');
 
 // @route GET api/auth
 // @desc Test route
 // @access public (no auth checks yet)
-/*
-    When this route becomes private then a token will need to be sent along to validate if the client can access this route 
-*/
-router.get('/auth', (req, res) => {
-	res.send('Whatup from the auth get route');
+router.get('/auth', auth, async (req, res) => {
+	try {
+		const user = await User.findById(req.user.id).select('-password');
+		res.json(user);
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
 });
 
 module.exports = router;
