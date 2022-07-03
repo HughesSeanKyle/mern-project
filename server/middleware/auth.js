@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 // next() = move on to next mw when resolved
 module.exports = function (req, res, next) {
 	// Get token from header
+	// This token is generated via the users id
+	// // Will be present on signIn and Signup
+	// // // Token will manage session
 	const token = req.header('x-auth-token');
 
 	// Check if there is no token
