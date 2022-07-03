@@ -5,6 +5,7 @@ const userRouter = require('./routes/api/users');
 const authRouter = require('./routes/api/auth');
 const postRouter = require('./routes/api/post');
 const profileRouter = require('./routes/api/profile');
+const chartRouter = require('./routes/api/chart');
 
 // Init Middleware
 app.use(express.json({ extended: false }));
@@ -18,6 +19,7 @@ app.use(userRouter);
 app.use(authRouter);
 app.use(postRouter);
 app.use(profileRouter);
+app.use(chartRouter);
 
 app.get('/', (req, res) => {
 	res.send('Hello from the root route');

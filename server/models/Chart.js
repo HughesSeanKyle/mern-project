@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ChartSchema = new mongoose.Schema({
-	name: {
+	chartName: {
 		type: String,
 		required: true,
 	},
@@ -11,10 +11,13 @@ const ChartSchema = new mongoose.Schema({
 	createdBy: {
 		type: String,
 	},
+	chartId: {
+		type: String,
+	},
 	dateCreated: {
 		type: Date,
 		default: Date.now,
 	},
 });
 
-module.exports = Chart = mogoose.model('chart', ChartSchema);
+module.exports = Chart = mongoose.model('chart', ChartSchema);
