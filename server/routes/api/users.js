@@ -107,8 +107,5 @@ router.post(
 		}
 	}
 );
-// router.get('/users', (req, res) => {
-// 	res.send('Whatup from the user get route');
-// });
 
 module.exports = router;
