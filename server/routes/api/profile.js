@@ -1,16 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
+const { check, validationResult } = require('express-validator');
 
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
-// @route GET api/profile/
-// // Route reserved to get all profiles
-// @desc Test route
-// @access public (no auth checks yet)
-
-// @route GET api/profile/me
+// @route GET /profile/me
 // @desc get the signed in user profile
 // @access pvt route => route accessed via token
 router.get('/profile/me', auth, async (req, res) => {
@@ -29,6 +25,33 @@ router.get('/profile/me', auth, async (req, res) => {
 		res.status(500).send('Server Error');
 	}
 });
+
+// @route Profile /profile
+// @desc Create or Update user Profile
+// @access Private
+router.post(
+	'/profile',
+	[
+		auth,
+		[
+			check('status', 'Status is required').not().isEmpty(),
+			check('skills', 'Skills is required').not().isEmpty(),
+		],
+	],
+	async (req, res) => {
+		// Pass over entire req object to validationResult
+		const errors = validationResult(req);
+
+		// Check if errs
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		res.send.json({
+			data: 'Request success',
+		});
+	}
+);
 
 module.exports = router;
 
