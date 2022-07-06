@@ -47,9 +47,80 @@ router.post(
 			return res.status(400).json({ errors: errors.array() });
 		}
 
-		res.json({
-			data: 'Request success',
-		});
+		const {
+			company,
+			website,
+			location,
+			bio,
+			status,
+			githubusername,
+			skills,
+			youtube,
+			facebook,
+			twitter,
+			instagram,
+			linkedin,
+		} = req.body;
+
+		// Build Profile object
+		const profileFields = {};
+		profileFields.user = req.user.id;
+		profileFields.social = {};
+
+		// Assign any completed fields to the profileFields object
+		for (const key of Object.keys(req.body)) {
+			if (key === 'status') profileFields[key] = req.body[key];
+			if (key && key !== 'status') {
+				if (key === 'skills') {
+					// Split skills by comma and trim values of spaces
+					profileFields.skills = skills.split(',').map((skill) => skill.trim());
+				} else if (
+					key === 'youtube' ||
+					'twitter' ||
+					'facebook' ||
+					'linkedIn' ||
+					'instagram'
+				) {
+					profileFields.social[key] = req.body[key];
+				} else {
+					profileFields[key] = req.body[key];
+				}
+			}
+		}
+
+		try {
+			// Find profile in db based on the AUTHORIZED user accessing this route
+			// // id comes from jwt and when decrypted id will be present in decrypted object
+			let profile = await Profile.findOne({ user: req.user.id });
+
+			if (profile) {
+				// update the profile if found
+				profile = await Profile.findOneAndUpdate(
+					{ user: req.user.id },
+					{ $set: profileFields },
+					{ new: true }
+				);
+
+				console.log('Profile from if - update', profile);
+
+				return res.json({
+					data: profile,
+					location: 'if',
+				});
+			} else {
+				// Create new profile
+				profile = new Profile(profileFields);
+
+				await profile.save();
+				res.json({
+					data: profile,
+					location: 'else',
+				});
+			}
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send('Server Error');
+		}
 	}
 );
 
