@@ -47,7 +47,7 @@ router.post(
 			return res.status(400).json({ errors: errors.array() });
 		}
 
-		res.send.json({
+		res.json({
 			data: 'Request success',
 		});
 	}
