@@ -26,7 +26,7 @@ router.get('/profile/me', auth, async (req, res) => {
 	}
 });
 
-// @route Profile /profile
+// @route POST /profile
 // @desc Create or Update user Profile
 // @access Private
 router.post(
@@ -124,6 +124,50 @@ router.post(
 	}
 );
 
+// @route GET /profile
+// @desc Get all profiles (No auth required as this should be available for all to access)
+// @access Public
+router.get('/profile', async (req, res) => {
+	try {
+		// #Note 2
+		const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+		res.json({
+			data: profiles,
+		});
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
+
+// @route GET /profile/user/:user_id
+// @desc Get profile by user id
+// @access Public
+router.get('/profile/user/:user_id', async (req, res) => {
+	try {
+		// #Note 2
+		const profile = await Profile.findOne({
+			user: req.params.user_id,
+		}).populate('user', ['name', 'avatar']);
+
+		if (!profile) {
+			// Bad req
+			return res.status(400).json({ msg: 'Profile not found' });
+		} else {
+			return res.status(200).json({
+				data: profile,
+			});
+		}
+	} catch (err) {
+		console.error(err.message);
+		// If error relates to that of an object id
+		if ((err.kind = 'ObjectId')) {
+			return res.status(400).json({ msg: 'Profile not found' });
+		}
+		res.status(500).send('Server Error');
+	}
+});
+
 module.exports = router;
 
 /*
@@ -143,5 +187,11 @@ module.exports = router;
 			['name', 'avatar']
 		);
             - Include these fields from the user model when returning the user Profile 
+
+	#Note 2 
+	- const profiles = await Profile.find().populate('user', ['name', 'avatar'])
+		- Get all profiles and append these user attributes 
+			- 1. name
+			- 2. avatar 
 
 */
