@@ -29,6 +29,11 @@ router.get('/profile/me', auth, async (req, res) => {
 // @route POST /profile
 // @desc Create or Update user Profile
 // @access Private
+/*
+	This route is private as it requires an authenticated user to create a profile. The jwt token created on signIn will be the access mechanism for the user to utilize this resource. 
+
+	Futhermore, it is this token that provides the user id the Profile model requires to create a relational link between Profile and User via the user.id (Provided by mongo)
+*/
 router.post(
 	'/profile',
 	[
@@ -69,7 +74,10 @@ router.post(
 
 		// Assign any completed fields to the profileFields object
 		for (const key of Object.keys(req.body)) {
-			if (key === 'status') profileFields[key] = req.body[key];
+			const keyArray = ['status', 'company', 'website', 'location'];
+			keyArray.map((keyItem) => {
+				if (key === keyItem) profileFields[key] = req.body[key];
+			});
 			if (key && key !== 'status') {
 				if (key === 'skills') {
 					// Split skills by comma and trim values of spaces
@@ -164,6 +172,27 @@ router.get('/profile/user/:user_id', async (req, res) => {
 		if ((err.kind = 'ObjectId')) {
 			return res.status(400).json({ msg: 'Profile not found' });
 		}
+		res.status(500).send('Server Error');
+	}
+});
+
+// @route DELETE /profile/user/:user_id
+// @desc DELETE profile, user & post
+// @access Private
+router.delete('/profile', auth, async (req, res) => {
+	try {
+		//  @todo - remove users posts
+
+		// Remove profile
+		await Profile.findOneAndRemove({ user: req.user.id });
+
+		await User.findOneAndRemove({ _id: req.user.id });
+
+		res.json({
+			msg: 'Profile and User Deleted',
+		});
+	} catch (err) {
+		console.error(err.message);
 		res.status(500).send('Server Error');
 	}
 });
