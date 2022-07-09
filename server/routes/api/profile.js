@@ -184,6 +184,7 @@ router.delete('/profile', auth, async (req, res) => {
 		//  @todo - remove users posts
 
 		// Remove profile
+		// Tip: Inside of a lambda function only these db commands will exist => Once serverless deploys the lamda function it will get its own url/endpoint. The conditions for the routes can then be tweaked even further inside of API gateway.
 		await Profile.findOneAndRemove({ user: req.user.id });
 
 		await User.findOneAndRemove({ _id: req.user.id });
@@ -196,6 +197,57 @@ router.delete('/profile', auth, async (req, res) => {
 		res.status(500).send('Server Error');
 	}
 });
+
+// @route PUT /profile/experience
+// @desc Update parts of profile profile
+// @access Private
+
+router.put(
+	'/profile/experience',
+	[
+		auth,
+		[
+			check('title', 'Title is a required field').not().isEmpty(),
+			check('company', 'Company is a required field').not().isEmpty(),
+			check('from', 'From Date is a required field').not().isEmpty(),
+		],
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+
+		// If there are any errors
+		if (!errors.isEmpty) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		const { title, company, location, from, to, current, description } =
+			req.body;
+
+		// e.g short hand for title:title => Below allocated from req.body
+		// Creates a new object with the data the user submits
+		const newExp = { title, company, location, from, to, current, description };
+
+		try {
+			// The persistence of this record will add it's own id within the experience array. Making it easy to update/delete/show this record on the client side
+			const profile = await Profile.findOne({ user: req.user.id });
+
+			// unshift => Same as push but adds to front rather than back of array
+			// This will ensure the most recent exp is first in the array and older exp is pushed to back of array.
+			profile.experience.unshift(newExp);
+
+			await profile.save();
+
+			res.json(profile);
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send('Server Error');
+		}
+	}
+);
+
+// @route PUT /profile/experience
+// @desc Update any experience fields within the arra
+// @access Private
 
 module.exports = router;
 
