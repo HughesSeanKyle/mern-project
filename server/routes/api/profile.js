@@ -109,11 +109,8 @@ router.post(
 					{ new: true }
 				);
 
-				console.log('Profile from if - update', profile);
-
 				return res.json({
 					data: profile,
-					location: 'if',
 				});
 			} else {
 				// Create new profile
@@ -122,7 +119,6 @@ router.post(
 				await profile.save();
 				res.json({
 					data: profile,
-					location: 'else',
 				});
 			}
 		} catch (err) {
@@ -199,7 +195,7 @@ router.delete('/profile', auth, async (req, res) => {
 });
 
 // @route PUT /profile/experience
-// @desc Update parts of profile profile
+// @desc Update parts of profile profile. This route could have been a post route as well. The main aim of this route is just for adding(Create/POST(Classified as put as it is part of the profile)) purposes. The route below will be to edit the added instance (target by id)
 // @access Private
 
 router.put(
@@ -237,7 +233,9 @@ router.put(
 
 			await profile.save();
 
-			res.json(profile);
+			res.json({
+				data: profile,
+			});
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send('Server Error');
@@ -246,8 +244,97 @@ router.put(
 );
 
 // @route PUT /profile/experience
-// @desc Update any experience fields within the arra
-// @access Private
+// @desc Update any experience fields within the array (For user experience purposes - The user will have an edit button next to experience - on Click => User will have all experience listed out in a list item => React requires item keys in a list to be unique, the experience id in the array will be the key and once the element with this key is selected, this will then be the key used to access and update the same object in the db). For now simulate id selection via postman.
+
+/* - // @ Additional Contex -
+	- steps in flow
+		- 1. Signs In and gets jwt token
+		- 2. User gets directed to say profile page
+		- 2.1 - (Clientside) Once route hit for profile useEffect will trigger get req to get user profile by user id (route === profile/me)
+		- 2.2 - Profile then rendered with various key fields 
+			- An edit button will will be located close to profile key 
+		- 3. The user selects edit experience as field to update
+			- This info is already present as get req for entire profile was made when user logged in  
+		- 4. A list of experience is then rendered from most recent to oldest as per array setup above 
+		- 5. User clicks on LI (Which has a key val that matches the id of the exp in the db)
+		- 6. Post req then made to query profile.experience[key_id]
+*/
+// @access Private - Only an Authenticated user will be able to update their experience
+router.put(
+	'/profile/experience/:exp_id',
+	[
+		auth,
+		[
+			check('title', 'Title is a required field').not().isEmpty(),
+			check('company', 'Company is a required field').not().isEmpty(),
+			check('from', 'From Date is a required field').not().isEmpty(),
+		],
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+
+		// If there are any errors
+		if (!errors.isEmpty) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		try {
+			// First get the profile by user id => This is passed through by auth token
+			let profile = await Profile.findOne({ user: req.user.id });
+
+			let expId = await req.params.exp_id;
+
+			// First check for experience
+			if (profile.experience.length > 0) {
+				// update the profile if found
+				// profile = await Profile.findOneAndUpdate(
+				// 	{ user: req.user.id },
+				// 	{ $set: profileFields },
+				// 	{ new: true }
+				// );
+
+				// console.log('Profile from if - update', profile);
+
+				return res.json({
+					data: profile,
+					experienceId: expId,
+					experienceById: profile.experience.map((item) =>
+						item.id == expId ? item : null
+					),
+				});
+			}
+
+			/*
+				else {
+				// If user does not have experience then allow them to still add some experience via this route.
+				const profile = await Profile.findOne({ user: req.user.id });
+				profile.experience.unshift(newExp);
+
+				await profile.save();
+
+				return res.json({
+					data: profile,
+				});
+			}
+			*/
+
+			// Job.update(
+			// 	{
+			// 		_id: found._id,
+			// 		'candidates.user': req.params.user_id
+			// 	},
+			// 	{
+			// 		$set: { 'candidates.$.status': 'Accepted'} },
+			// 	}, function(err, count) {
+			// 		   if (err) return next(err);
+			// 		   callback(err, count);
+			// });
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send('Server Error');
+		}
+	}
+);
 
 module.exports = router;
 
