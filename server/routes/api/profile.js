@@ -287,7 +287,17 @@ router.put(
 					user: req.user.id,
 					'experience.0.id': mongoose.Types.ObjectId(req.params.exp_id),
 				},
-				{ $set: { [`experience.0.title`]: req.body.title } }
+				{
+					$set: {
+						[`experience.0.title`]: req.body.title,
+					},
+					$set: {
+						[`experience.0.company`]: req.body.company,
+					},
+					$set: {
+						[`experience.0.location`]: req.body.location,
+					},
+				}
 			);
 
 			return res.json({
