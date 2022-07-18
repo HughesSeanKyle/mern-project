@@ -5,6 +5,7 @@ const { check, validationResult } = require('express-validator');
 
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+const mongoose = require('mongoose');
 
 // @route GET /profile/me
 // @desc get the signed in user profile
@@ -275,36 +276,36 @@ router.put(
 
 		// If there are any errors
 		if (!errors.isEmpty) {
+			// Bad request
 			return res.status(400).json({ errors: errors.array() });
 		}
 
 		try {
 			// First get the profile by user id => This is passed through by auth token
-			let profile = await Profile.findOne({ user: req.user.id });
+			let updatedProfile = await Profile.findOneAndUpdate(
+				{
+					user: req.user.id,
+					'experience.0.id': mongoose.Types.ObjectId(req.params.exp_id),
+				},
+				{ $set: { [`experience.0.title`]: req.body.title } }
+			);
 
-			let expId = await req.params.exp_id;
+			return res.json({
+				experienceId: req.params.exp_id,
+				// experienceById: profile.experience.map((item) =>
+				// 	item.id == expId ? item : null
+				// ),
+				reqBody: req.body,
+				updatedProfile: updatedProfile,
+			});
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send('Server Error');
+		}
+	}
+);
 
-			// First check for experience
-			if (profile.experience.length > 0) {
-				// update the profile if found
-				// profile = await Profile.findOneAndUpdate(
-				// 	{ user: req.user.id },
-				// 	{ $set: profileFields },
-				// 	{ new: true }
-				// );
-
-				// console.log('Profile from if - update', profile);
-
-				return res.json({
-					data: profile,
-					experienceId: expId,
-					experienceById: profile.experience.map((item) =>
-						item.id == expId ? item : null
-					),
-				});
-			}
-
-			/*
+/*
 				else {
 				// If user does not have experience then allow them to still add some experience via this route.
 				const profile = await Profile.findOne({ user: req.user.id });
@@ -318,23 +319,17 @@ router.put(
 			}
 			*/
 
-			// Job.update(
-			// 	{
-			// 		_id: found._id,
-			// 		'candidates.user': req.params.user_id
-			// 	},
-			// 	{
-			// 		$set: { 'candidates.$.status': 'Accepted'} },
-			// 	}, function(err, count) {
-			// 		   if (err) return next(err);
-			// 		   callback(err, count);
-			// });
-		} catch (err) {
-			console.error(err.message);
-			res.status(500).send('Server Error');
-		}
-	}
-);
+// Job.update(
+// 	{
+// 		_id: found._id,
+// 		'candidates.user': req.params.user_id
+// 	},
+// 	{
+// 		$set: { 'candidates.$.status': 'Accepted'} },
+// 	}, function(err, count) {
+// 		   if (err) return next(err);
+// 		   callback(err, count);
+// });
 
 module.exports = router;
 
