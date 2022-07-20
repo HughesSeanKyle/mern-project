@@ -280,33 +280,42 @@ router.put(
 			return res.status(400).json({ errors: errors.array() });
 		}
 
+		// const myLoopingFunction = () => {
+		// 	let requestBodyKeys = Object.keys(req.body);
+		// 	// const myArr = [1, 2, 3, 4, 5];
+		// 	requestBodyKeys.map((key) => {
+		// 		console.log(key);
+		// 		$set: {
+		// 			[`experience.0.${key}`]: req.body[key],
+		// 		}
+		// 	});
+		// };
+
 		try {
 			// First get the profile by user id => This is passed through by auth token
-			let updatedProfile = await Profile.findOneAndUpdate(
-				{
-					user: req.user.id,
-					'experience.0.id': mongoose.Types.ObjectId(req.params.exp_id),
-				},
-				{
-					$set: {
-						[`experience.0.title`]: req.body.title,
-					},
-					$set: {
-						[`experience.0.company`]: req.body.company,
-					},
-					$set: {
-						[`experience.0.location`]: req.body.location,
-					},
-				}
-			);
+			const updateExperience = async () => {
+				for (var prop in req.body) {
+					console.log(prop);
 
-			return res.json({
-				experienceId: req.params.exp_id,
-				// experienceById: profile.experience.map((item) =>
-				// 	item.id == expId ? item : null
-				// ),
-				reqBody: req.body,
-				updatedProfile: updatedProfile,
+					// Update each field in req.body
+					let updatedProfile = await Profile.findOneAndUpdate(
+						{
+							user: req.user.id,
+							'experience.0.id': mongoose.Types.ObjectId(req.params.exp_id),
+						},
+						{
+							$set: {
+								[`experience.0.${prop}`]: req.body[prop],
+							},
+						}
+					);
+				}
+			};
+
+			await updateExperience();
+
+			return res.status(200).json({
+				msg: 'Updated successfully',
 			});
 		} catch (err) {
 			console.error(err.message);
