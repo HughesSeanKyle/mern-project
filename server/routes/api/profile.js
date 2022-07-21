@@ -280,39 +280,91 @@ router.put(
 			return res.status(400).json({ errors: errors.array() });
 		}
 
-		// const myLoopingFunction = () => {
-		// 	let requestBodyKeys = Object.keys(req.body);
-		// 	// const myArr = [1, 2, 3, 4, 5];
-		// 	requestBodyKeys.map((key) => {
-		// 		console.log(key);
-		// 		$set: {
-		// 			[`experience.0.${key}`]: req.body[key],
-		// 		}
-		// 	});
-		// };
+		const selectedExpIdx = req.headers.selectedexpidx;
+		console.log(('selectedExpIdx', selectedExpIdx));
+
+		console.log(('HEADERS', req.headers));
 
 		try {
 			// First get the profile by user id => This is passed through by auth token
-			const updateExperience = async () => {
+			const updateExperience = async (selectedExpIdx) => {
 				for (var prop in req.body) {
 					console.log(prop);
 
 					// Update each field in req.body
+					/*
+						1. Get the profile associated with the authed user 
+						2. Target the experience array at elm 1 with the provided id 
+						3. Set the prop provided with the prop value provided in req.body
+
+						- Next 
+							- Make it so that the user can dynamically target any elm in the array
+								- Visualize the UX for that particular selection 
+
+							- Potential client side flow 
+								- Scenario 1 (From perspective of Authenticated user)
+									- User visits https://mydomain/<layout-page>/profile/me 
+										- 1. on the layout page 
+											- Run a UseEffect[] that will GET an authenticated user's 
+												- 1.1 Credentials 
+													- Use this to manage session
+												- 1.2 Profile information 
+													- This will be displayed on the the /profile/me route
+													- The keys within the response will be clickable headings 
+														- with a drop down 
+												- 1.3 User clicks Experience drop down 
+													- 1.3.1 A selection field is rendered for each elm in array 
+														- Each Selection field will have the following props
+															- i) Rendering items via a map requires a key in react 
+																- The key will be the array[elm].mongoDbID
+																	- an update and delete button will be rendered on each selection 
+												- 1.4 The user clicks update on the respective selection (array[elm]/index) they wish to update
+													- 1.4.1 - A form on a modal appears 
+													- 1.4.2 - User enters info 
+													- 1.4.3 - Clicks submit 
+													- 1.4.4 - A put request is made from client side to this route 
+														- INSIDE THE PUT REQUEST HEADERS 
+															- The JWT token the user received from signIn
+																- This token will be available in state and will be made 
+																	- globally available for all comps 
+																		- Example of app structure 
+																			- App.js (token state here - auth will pass back if not using redux)
+																				- Auth (Layout file)
+																				- <Any additional layout> 
+														- FROM THE URL PARAMS 
+															- The ExpArray[elm].id  
+																- This will be retrieved when the user clicks update 
+																	- The key will be stored in state
+																		- The index of this selected field will also be part of this state 
+																			- example state : {
+																				slectedExpID: 54645464,
+																				selectedExpIdx: 0
+																			}
+																				- The selectedExpIdx can be sent through the req.headers
+																					- This piece of state can then alter the desired elm in array 
+																	- This piece of state will be sent along as the exp_id in params 
+																		- Example on client side 
+																			- fetch("https://mydomain/profile/experience/${idOrkeyFromSelectedExp}".....)
+																	- The index param from the map statement will be assigned to 
+														- FORM DATA 
+															- FRom request.body  
+					*/
+					let ExpArrayElm = `experience.${selectedExpIdx}.id`;
 					let updatedProfile = await Profile.findOneAndUpdate(
 						{
 							user: req.user.id,
-							'experience.0.id': mongoose.Types.ObjectId(req.params.exp_id),
+							ExpArrayElm: mongoose.Types.ObjectId(req.params.exp_id),
 						},
 						{
 							$set: {
-								[`experience.0.${prop}`]: req.body[prop],
+								[`experience.${selectedExpIdx}.${prop}`]: req.body[prop],
 							},
 						}
 					);
 				}
 			};
 
-			await updateExperience();
+			await updateExperience(selectedExpIdx);
 
 			return res.status(200).json({
 				msg: 'Updated successfully',
