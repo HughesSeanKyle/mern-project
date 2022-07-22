@@ -348,6 +348,14 @@ router.put(
 																	- The index param from the map statement will be assigned to 
 														- FORM DATA 
 															- FRom request.body  
+
+						- 21/07/
+							- Next steps 
+								- 1. Create a new object in array (New ID )
+									- Implemented
+								- 2. Target update of that new object 
+									- Implemented
+
 					*/
 					let ExpArrayElm = `experience.${selectedExpIdx}.id`;
 					let updatedProfile = await Profile.findOneAndUpdate(
@@ -375,32 +383,6 @@ router.put(
 		}
 	}
 );
-
-/*
-				else {
-				// If user does not have experience then allow them to still add some experience via this route.
-				const profile = await Profile.findOne({ user: req.user.id });
-				profile.experience.unshift(newExp);
-
-				await profile.save();
-
-				return res.json({
-					data: profile,
-				});
-			}
-			*/
-
-// Job.update(
-// 	{
-// 		_id: found._id,
-// 		'candidates.user': req.params.user_id
-// 	},
-// 	{
-// 		$set: { 'candidates.$.status': 'Accepted'} },
-// 	}, function(err, count) {
-// 		   if (err) return next(err);
-// 		   callback(err, count);
-// });
 
 module.exports = router;
 
