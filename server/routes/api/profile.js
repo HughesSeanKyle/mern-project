@@ -285,13 +285,85 @@ router.put(
 
 		console.log(('HEADERS', req.headers));
 
+		let updatedProfile;
+
 		try {
 			// First get the profile by user id => This is passed through by auth token
 			const updateExperience = async (selectedExpIdx) => {
 				for (var prop in req.body) {
 					console.log(prop);
 
-					// Update each field in req.body
+					let ExpArrayElm = `experience.${selectedExpIdx}.id`;
+					updatedProfile = await Profile.findOneAndUpdate(
+						{
+							user: req.user.id,
+							ExpArrayElm: mongoose.Types.ObjectId(req.params.exp_id),
+						},
+						{
+							$set: {
+								[`experience.${selectedExpIdx}.${prop}`]: req.body[prop],
+							},
+						}
+					);
+				}
+			};
+
+			await updateExperience(selectedExpIdx);
+			await updatedProfile.save();
+
+			return res.status(200).json({
+				updatedProfile: updatedProfile,
+			});
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send('Server Error');
+		}
+	}
+);
+
+// @route    DELETE Experience profile/experience/:exp_id
+/* 
+	Route can also be a PUT req as it is editing props within Profile
+*/
+// @desc     Delete exp from profile
+// @access   Private
+router.delete('/experience/:exp_id', auth, async (req, res) => {
+	try {
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
+
+module.exports = router;
+
+/*
+    #Note 1
+    - const profile = await Profile.findOne({ user: req.user.id }).populate(
+			'user',
+			['name', 'avatar']
+		);
+
+        - Find the profile which matches the req.user.id 
+            - req.user.id 
+                - This is the decrypted JWT user id returned from auth 
+                - If this user is not returned then this route cannot be accessed  
+
+        - .populate(
+			'user',
+			['name', 'avatar']
+		);
+            - Include these fields from the user model when returning the user Profile 
+
+	#Note 2 
+	- const profiles = await Profile.find().populate('user', ['name', 'avatar'])
+		- Get all profiles and append these user attributes 
+			- 1. name
+			- 2. avatar 
+
+	#Note 3 
+	- Further client side planning for edit experience route - 
+	// Update each field in req.body
 					/*
 						1. Get the profile associated with the authed user 
 						2. Target the experience array at elm 1 with the provided id 
@@ -356,58 +428,6 @@ router.put(
 								- 2. Target update of that new object 
 									- Implemented
 
-					*/
-					let ExpArrayElm = `experience.${selectedExpIdx}.id`;
-					let updatedProfile = await Profile.findOneAndUpdate(
-						{
-							user: req.user.id,
-							ExpArrayElm: mongoose.Types.ObjectId(req.params.exp_id),
-						},
-						{
-							$set: {
-								[`experience.${selectedExpIdx}.${prop}`]: req.body[prop],
-							},
-						}
-					);
-				}
-			};
-
-			await updateExperience(selectedExpIdx);
-
-			return res.status(200).json({
-				msg: 'Updated successfully',
-			});
-		} catch (err) {
-			console.error(err.message);
-			res.status(500).send('Server Error');
-		}
-	}
-);
-
-module.exports = router;
-
-/*
-    #Note 1
-    - const profile = await Profile.findOne({ user: req.user.id }).populate(
-			'user',
-			['name', 'avatar']
-		);
-
-        - Find the profile which matches the req.user.id 
-            - req.user.id 
-                - This is the decrypted JWT user id returned from auth 
-                - If this user is not returned then this route cannot be accessed  
-
-        - .populate(
-			'user',
-			['name', 'avatar']
-		);
-            - Include these fields from the user model when returning the user Profile 
-
-	#Note 2 
-	- const profiles = await Profile.find().populate('user', ['name', 'avatar'])
-		- Get all profiles and append these user attributes 
-			- 1. name
-			- 2. avatar 
+					
 
 */
