@@ -280,6 +280,7 @@ router.put(
 			return res.status(400).json({ errors: errors.array() });
 		}
 
+		// Get the index of exp object in exp array
 		const selectedExpIdx = req.headers.selectedexpidx;
 		console.log(('selectedExpIdx', selectedExpIdx));
 
@@ -327,8 +328,26 @@ router.put(
 */
 // @desc     Delete exp from profile
 // @access   Private
-router.delete('/experience/:exp_id', auth, async (req, res) => {
+router.delete('/profile/experience/:exp_id', auth, async (req, res) => {
 	try {
+		// Get the profile of the authenticated user
+		const profile = await Profile.findOne({ user: req.user.id });
+
+		// Index in Experience array to remove
+		// Compare the ID given in params to id provided in Exp element. Use map to loop each of them and test against each expItem then return
+		const removeIndex = profile.experience
+			.map((expItem) => expItem.id)
+			.indexOf(req.params.exp_id);
+
+		// Create an instance of profile where the respective ExpId is removed
+		profile.experience.splice(removeIndex);
+
+		// persist the edited profile instance to db
+		await profile.save();
+
+		return res.status(200).json({
+			updatedProfile: profile,
+		});
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).send('Server Error');
