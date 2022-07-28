@@ -340,7 +340,100 @@ router.delete('/profile/experience/:exp_id', auth, async (req, res) => {
 			.indexOf(req.params.exp_id);
 
 		// Create an instance of profile where the respective ExpId is removed
-		profile.experience.splice(removeIndex);
+		profile.experience.splice(removeIndex, 1);
+
+		// persist the edited profile instance to db
+		await profile.save();
+
+		return res.status(200).json({
+			updatedProfile: profile,
+		});
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
+
+// @route    ADD/CREATE/POST Profile Education profile/education/:exp_id
+/* 
+	Route can also be a PUT req as it is editing props within Profile
+*/
+// @desc     Add Education to profile
+// @access   Private
+router.post(
+	'/profile/education/',
+	[
+		auth,
+		[
+			check('school', 'School is a required field').not().isEmpty(),
+			check('degree', 'Degree is a required field').not().isEmpty(),
+			check('fieldofstudy', 'Field of study is a required field')
+				.not()
+				.isEmpty(),
+			check('from', 'From Date is a required field').not().isEmpty(),
+		],
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+
+		// If there are any errors
+		if (!errors.isEmpty) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		const { school, degree, fieldofstudy, from, to, current, description } =
+			req.body;
+
+		// e.g short hand for title:title => Below allocated from req.body
+		// Creates a new object with the data the user submits
+		const newEdu = {
+			school,
+			degree,
+			fieldofstudy,
+			from,
+			to,
+			current,
+			description,
+		};
+
+		try {
+			// The persistence of this record will add it's own id within the experience array. Making it easy to update/delete/show this record on the client side
+			const profile = await Profile.findOne({ user: req.user.id });
+
+			// unshift => Same as push but adds to front rather than back of array
+			// This will ensure the most recent exp is first in the array and older exp is pushed to back of array.
+			profile.education.unshift(newEdu);
+
+			await profile.save();
+
+			res.json({
+				data: profile,
+			});
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send('Server Error');
+		}
+	}
+);
+
+// --------------------------------
+// @route    DELETE Profile Education profile/education/:edu_id
+/* 
+	Route can also be a PUT req as it is editing props within Profile
+*/
+// @desc     Delete Education from profile profile
+// @access   Private
+router.delete('/profile/education/:edu_id', auth, async (req, res) => {
+	try {
+		// Get the profile of the authenticated user
+		const profile = await Profile.findOne({ user: req.user.id });
+
+		const removeIndex = profile.education
+			.map((eduItem) => eduItem.id)
+			.indexOf(req.params.edu_id);
+
+		// Create an instance of profile where the respective EduId is removed
+		profile.education.splice(removeIndex, 1);
 
 		// persist the edited profile instance to db
 		await profile.save();
