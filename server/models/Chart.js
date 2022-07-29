@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const ChartSchema = new mongoose.Schema({
+	user: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'user',
+	},
 	chartName: {
 		type: String,
 		required: true,
