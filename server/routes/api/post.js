@@ -42,7 +42,7 @@ router.post(
 
 			const post = await newPost.save();
 
-			res.json({
+			res.status(200).json({
 				data: post,
 			});
 		} catch (err) {
@@ -51,5 +51,22 @@ router.post(
 		}
 	}
 );
+
+// @route GET /post
+// @desc Get all posts
+// @access private (Users must be logged in to see comments)
+
+router.get('/posts', auth, async (req, res) => {
+	try {
+		// Sorting by -1 will return the most recent posts
+		const posts = await Post.find().sort({ date: -1 });
+		res.status(200).json({
+			data: posts,
+		});
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
 
 module.exports = router;
