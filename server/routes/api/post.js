@@ -127,4 +127,33 @@ router.delete('/posts/:id', auth, async (req, res) => {
 	}
 });
 
+// @route PUT /post/like/:id
+// @desc Like a post
+// @access private
+router.put('/like/:id', auth, async (req, res) => {
+	try {
+		const post = await Post.findById(req.params.id);
+
+		// Check if the post has already been liked
+		/*
+			filter is higher order array method
+			- 1. Loop through all 'likes'
+			- 2. convert the id in the like.user obj to a string 
+			- 3. Match it to the AUTHENTICATED user
+			- 4. Check if that user does in fact have any likes on respective post 
+			- 5. then run if logic 
+			- In a nutshell 
+				- filter all likes and return only the likes that belong to the AUTHENTICATED user  
+		*/
+		if (
+			post.likes.filter((like) => like.user.toString() == req.user.id).length >
+			0
+		) {
+		}
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
+
 module.exports = router;
