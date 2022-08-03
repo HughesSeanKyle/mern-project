@@ -130,7 +130,7 @@ router.delete('/posts/:id', auth, async (req, res) => {
 // @route PUT /post/like/:id
 // @desc Like a post
 // @access private
-router.put('/like/:id', auth, async (req, res) => {
+router.put('/posts/like/:id', auth, async (req, res) => {
 	try {
 		const post = await Post.findById(req.params.id);
 
@@ -141,15 +141,59 @@ router.put('/like/:id', auth, async (req, res) => {
 			- 2. convert the id in the like.user obj to a string 
 			- 3. Match it to the AUTHENTICATED user
 			- 4. Check if that user does in fact have any likes on respective post 
-			- 5. then run if logic 
-			- In a nutshell 
-				- filter all likes and return only the likes that belong to the AUTHENTICATED user  
+			- 5. Return msg that post already liked    
 		*/
 		if (
 			post.likes.filter((like) => like.user.toString() == req.user.id).length >
 			0
 		) {
+			// 400 Bad Request
+			return res.status(400).json({ msg: 'Post already liked' });
 		}
+
+		// If post not like then add users like to the beginning of the particular post's likes array (unshift opposite of push - adds at beginning of array rather than at end)
+		post.likes.unshift({ user: req.user.id });
+
+		await post.save();
+
+		res.status(200).json({
+			data: post.likes,
+		});
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
+
+// @route PUT /post/unlike/:id
+// @desc Like a post
+// @access private
+router.put('/posts/unlike/:id', auth, async (req, res) => {
+	try {
+		const post = await Post.findById(req.params.id);
+
+		// Check if === 0 to see if user has NOT liked it yet
+
+		if (
+			post.likes.filter((like) => like.user.toString() == req.user.id)
+				.length === 0
+		) {
+			// 400 Bad Request
+			return res.status(400).json({ msg: 'Post has not yet been liked' });
+		}
+
+		// Get remove index
+		const removeIndex = post.likes
+			.map((like) => like.user.toString())
+			.indexOf(req.user.id);
+
+		post.likes.splice(removeIndex, 1);
+
+		await post.save();
+
+		res.status(200).json({
+			data: post.likes,
+		});
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).send('Server Error');
