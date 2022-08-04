@@ -7,6 +7,8 @@ const postRouter = require('./routes/api/post');
 const profileRouter = require('./routes/api/profile');
 const chartRouter = require('./routes/api/chart');
 
+// console.log(chartRouter);
+
 // Init Middleware
 app.use(express.json({ extended: false }));
 
