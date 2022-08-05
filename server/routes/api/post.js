@@ -244,4 +244,55 @@ router.post(
 	}
 );
 
+/*
+	- For the below route, first the post must be found then the respective comment to delete
+*/
+// @route DELETE /posts/comment/:id/:comment_id
+// @desc Delete on a post
+// @access private (USer must be logged in to delete a post)
+router.delete('/posts/comment/:id/:comment_id', auth, async (req, res) => {
+	try {
+		const post = await Post.findById(req.params.id);
+
+		// Extract comment
+		const extractedComment = post.comments.find(
+			(comment) => comment.id === req.params.comment_id
+		);
+
+		// Make sure comment exist
+		if (!extractedComment) {
+			return res.status(404).json({
+				msg: 'Comment does not exists',
+			});
+		}
+
+		// Check user
+		/*
+			The user id within the model is of type object and must be converted to a string to compare to id of authorized user (from JWT)
+		*/
+		if (extractedComment.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'User not authorized' });
+		}
+
+		// Get remove index
+		/*
+			Return the index of the comment where the user id on comment matches the authed user
+		*/
+		const removeIndex = post.comments
+			.map((comment) => comment.user.toString())
+			.indexOf(req.user.id);
+
+		post.comments.splice(removeIndex, 1);
+
+		await post.save();
+
+		res.status(200).json({
+			data: post.comments,
+		});
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
+
 module.exports = router;
