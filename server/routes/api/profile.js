@@ -213,7 +213,7 @@ router.put(
 		const errors = validationResult(req);
 
 		// If there are any errors
-		if (!errors.isEmpty) {
+		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
 

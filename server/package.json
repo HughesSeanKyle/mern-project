@@ -23,5 +23,8 @@
     "mongoose": "^6.4.0",
     "nodemon": "^2.0.16",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "concurrently": "^7.3.0"
   }
 }
