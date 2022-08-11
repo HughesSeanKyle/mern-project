@@ -37,6 +37,7 @@ function Sidebar(props) {
 	};
 	// this function creates the links and collapses that appear in the sidebar (left menu)
 	const createLinks = (routes) => {
+		console.log('adminRoutes', adminRoutes);
 		const { sidebarVariant } = props;
 		// Chakra Color Mode
 		let activeBg = '#1A1F37';
@@ -189,7 +190,14 @@ function Sidebar(props) {
 	};
 	const { logoText, routes, sidebarVariant } = props;
 
-	var links = <>{createLinks(routes)}</>;
+	const adminRoutes = routes.filter((route) => route.layout === '/admin');
+	const authRoutes = routes.filter((route) => route.layout === '/auth');
+
+	let links = location.pathname.includes('/admin') ? (
+		<>{createLinks(adminRoutes)}</>
+	) : (
+		<>{createLinks(authRoutes)}</>
+	);
 	//  BRAND
 	//  Chakra Color Mode
 	let sidebarBg =
@@ -255,6 +263,7 @@ function Sidebar(props) {
 	);
 }
 
+// SIDEBAR RESPONSIVE HERE ___________________________________________
 // FUNCTIONS
 
 export function SidebarResponsive(props) {
@@ -414,7 +423,14 @@ export function SidebarResponsive(props) {
 	};
 	const { logoText, routes, iconColor, ...rest } = props;
 
-	var links = <>{createLinks(routes)}</>;
+	const adminRoutes = routes.filter((route) => route.layout === '/admin');
+	const authRoutes = routes.filter((route) => route.layout === '/auth');
+
+	let links = location.pathname.includes('/admin') ? (
+		<>{createLinks(adminRoutes)}</>
+	) : (
+		<>{createLinks(authRoutes)}</>
+	);
 	//  BRAND
 	//  Chakra Color Mode
 	var brand = (

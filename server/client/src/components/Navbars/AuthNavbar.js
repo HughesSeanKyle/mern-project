@@ -18,9 +18,11 @@ import {
 import { SidebarResponsive } from 'components/Sidebar/Sidebar';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import routes from 'routes.js';
 export default function AuthNavbar(props) {
+	const location = useLocation();
+
 	const [open, setOpen] = React.useState(false);
 	const handleDrawerToggle = () => {
 		setOpen(!open);
@@ -71,6 +73,7 @@ export default function AuthNavbar(props) {
 		<HStack display={{ sm: 'none', lg: 'flex' }}>
 			<NavLink to="/admin/dashboard">
 				<Button
+					display={location.pathname.includes('/auth') ? 'none' : 'revert'}
 					fontSize="sm"
 					ms="0px"
 					me="0px"
@@ -85,6 +88,7 @@ export default function AuthNavbar(props) {
 			</NavLink>
 			<NavLink to="/admin/profile">
 				<Button
+					display={location.pathname.includes('/auth') ? 'none' : 'revert'}
 					fontSize="sm"
 					ms="0px"
 					me="0px"
@@ -101,6 +105,7 @@ export default function AuthNavbar(props) {
 			</NavLink>
 			<NavLink to="/auth/signup">
 				<Button
+					display={location.pathname.includes('signup') ? 'none' : 'revert'}
 					fontSize="sm"
 					ms="0px"
 					me="0px"
@@ -117,6 +122,7 @@ export default function AuthNavbar(props) {
 			</NavLink>
 			<NavLink to="/auth/signin">
 				<Button
+					display={location.pathname.includes('signin') ? 'none' : 'revert'}
 					fontSize="sm"
 					ms="0px"
 					px="0px"
