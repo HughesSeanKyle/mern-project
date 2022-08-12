@@ -46,7 +46,8 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.1",
     "stylis": "^4.0.10",
-    "stylis-plugin-rtl": "^2.1.0"
+    "stylis-plugin-rtl": "^2.1.0",
+    "uuid": "^8.3.2"
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
