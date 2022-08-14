@@ -72,10 +72,15 @@
   "devDependencies": {
     "@babel/plugin-transform-react-jsx-source": "^7.14.5",
     "@delowar/react-circle-progressbar": "^1.0.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^14.4.3",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.9",
+    "jest-transform-stub": "^2.0.0",
+    "jest-transformer-svg": "^2.0.0",
     "prettier": "2.2.1"
   },
   "browserslist": {

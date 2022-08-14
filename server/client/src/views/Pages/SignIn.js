@@ -1,11 +1,16 @@
 import React from 'react';
 // Chakra imports
 import {
+	Alert,
+	AlertIcon,
+	AlertTitle,
+	AlertDescription,
 	Box,
 	Flex,
 	Button,
 	FormControl,
 	FormLabel,
+	FormErrorMessage,
 	Heading,
 	Input,
 	Link,
@@ -19,6 +24,31 @@ import signInImage from 'assets/img/signInImage.png';
 
 // Custom Components
 import GradientBorder from 'components/GradientBorder/GradientBorder';
+
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+const schema = yup.object().shape({
+	email: yup
+		.string()
+		.matches(
+			/^(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}$/i,
+			'Invalid Email'
+		)
+		.required(),
+	password: yup
+		.string()
+		.matches(
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]?)[A-Za-z\d\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]{8,}$/,
+			'Password must contain minimum 8 characters, atleast one lowercase letter, uppercase letter, number'
+		)
+		.required(),
+	passwordConfirm: yup
+		.string()
+		.required('Confirm Password is required')
+		.oneOf([yup.ref('password')], 'Passwords must and should match'),
+});
 
 function SignIn() {
 	const titleColor = 'white';
@@ -64,88 +94,90 @@ function SignIn() {
 						>
 							Enter your email and password to sign in
 						</Text>
-						<FormControl>
-							<FormLabel
-								ms="4px"
-								fontSize="sm"
-								fontWeight="normal"
-								color="white"
-							>
-								Email
-							</FormLabel>
-							<GradientBorder
-								mb="24px"
-								w={{ base: '100%', lg: 'fit-content' }}
-								borderRadius="20px"
-							>
-								<Input
-									color="white"
-									bg="rgb(19,21,54)"
-									border="transparent"
-									borderRadius="20px"
+						<form onSubmit={handleSubmit('')}>
+							<FormControl>
+								<FormLabel
+									ms="4px"
 									fontSize="sm"
-									size="lg"
-									w={{ base: '100%', md: '346px' }}
-									maxW="100%"
-									h="46px"
-									placeholder="Your email adress"
-								/>
-							</GradientBorder>
-						</FormControl>
-						<FormControl>
-							<FormLabel
-								ms="4px"
-								fontSize="sm"
-								fontWeight="normal"
-								color="white"
-							>
-								Password
-							</FormLabel>
-							<GradientBorder
-								mb="24px"
-								w={{ base: '100%', lg: 'fit-content' }}
-								borderRadius="20px"
-							>
-								<Input
+									fontWeight="normal"
 									color="white"
-									bg="rgb(19,21,54)"
-									border="transparent"
+								>
+									Email
+								</FormLabel>
+								<GradientBorder
+									mb="24px"
+									w={{ base: '100%', lg: 'fit-content' }}
 									borderRadius="20px"
+								>
+									<Input
+										color="white"
+										bg="rgb(19,21,54)"
+										border="transparent"
+										borderRadius="20px"
+										fontSize="sm"
+										size="lg"
+										w={{ base: '100%', md: '346px' }}
+										maxW="100%"
+										h="46px"
+										placeholder="Your email adress"
+									/>
+								</GradientBorder>
+							</FormControl>
+							<FormControl>
+								<FormLabel
+									ms="4px"
 									fontSize="sm"
-									size="lg"
-									w={{ base: '100%', md: '346px' }}
-									maxW="100%"
-									type="password"
-									placeholder="Your password"
-								/>
-							</GradientBorder>
-						</FormControl>
-						<FormControl display="flex" alignItems="center">
-							<DarkMode>
-								<Switch id="remember-login" colorScheme="brand" me="10px" />
-							</DarkMode>
-							<FormLabel
-								htmlFor="remember-login"
-								mb="0"
-								ms="1"
-								fontWeight="normal"
-								color="white"
+									fontWeight="normal"
+									color="white"
+								>
+									Password
+								</FormLabel>
+								<GradientBorder
+									mb="24px"
+									w={{ base: '100%', lg: 'fit-content' }}
+									borderRadius="20px"
+								>
+									<Input
+										color="white"
+										bg="rgb(19,21,54)"
+										border="transparent"
+										borderRadius="20px"
+										fontSize="sm"
+										size="lg"
+										w={{ base: '100%', md: '346px' }}
+										maxW="100%"
+										type="password"
+										placeholder="Your password"
+									/>
+								</GradientBorder>
+							</FormControl>
+							<FormControl display="flex" alignItems="center">
+								<DarkMode>
+									<Switch id="remember-login" colorScheme="brand" me="10px" />
+								</DarkMode>
+								<FormLabel
+									htmlFor="remember-login"
+									mb="0"
+									ms="1"
+									fontWeight="normal"
+									color="white"
+								>
+									Remember me
+								</FormLabel>
+							</FormControl>
+							<Button
+								variant="brand"
+								fontSize="10px"
+								type="submit"
+								w="100%"
+								maxW="350px"
+								h="45"
+								mb="20px"
+								mt="20px"
 							>
-								Remember me
-							</FormLabel>
-						</FormControl>
-						<Button
-							variant="brand"
-							fontSize="10px"
-							type="submit"
-							w="100%"
-							maxW="350px"
-							h="45"
-							mb="20px"
-							mt="20px"
-						>
-							SIGN IN
-						</Button>
+								SIGN IN
+							</Button>
+						</form>
 
 						<Flex
 							flexDirection="column"
