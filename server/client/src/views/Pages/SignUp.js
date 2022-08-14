@@ -228,6 +228,7 @@ function SignUp() {
 										mb={!!errors?.username ? '0px' : '24px'}
 									>
 										<Input
+											data-testid="sign-up-input-username"
 											color={titleColor}
 											bg={{
 												base: 'rgb(19,21,54)',
@@ -284,6 +285,7 @@ function SignUp() {
 											placeholder="Your email address"
 											name="email"
 											{...register('email')}
+											data-testid="sign-up-input-email"
 										/>
 									</GradientBorder>
 									<FormErrorMessage mb="24px">
@@ -325,6 +327,7 @@ function SignUp() {
 											placeholder="Your password"
 											name="password"
 											{...register('password')}
+											data-testid="sign-up-input-password"
 										/>
 									</GradientBorder>
 									<FormErrorMessage mb="24px">
@@ -366,6 +369,7 @@ function SignUp() {
 											name="passwordConfirm"
 											placeholder="Confirm password"
 											{...register('passwordConfirm')}
+											data-testid="sign-up-input-confirm-password"
 										/>
 									</GradientBorder>
 									<FormErrorMessage mb="24px">
@@ -387,6 +391,14 @@ function SignUp() {
 									</FormLabel>
 								</FormControl>
 								<Button
+									disabled={
+										!!errors.username ||
+										!!errors.email ||
+										!!errors.password ||
+										!!errors.passwordConfirm
+									}
+									data-testid="sign-up-button"
+									isLoading={isSubmitting}
 									variant="brand"
 									fontSize="10px"
 									type="submit"

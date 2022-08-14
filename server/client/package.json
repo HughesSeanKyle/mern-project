@@ -73,7 +73,7 @@
     "@babel/plugin-transform-react-jsx-source": "^7.14.5",
     "@delowar/react-circle-progressbar": "^1.0.0",
     "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.3.0",
+    "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.4.3",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.0",
@@ -93,6 +93,27 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "!src/App.js",
+      "!src/index.js",
+      "src/components/**/*.js",
+      "src/layouts/*.js",
+      "src/*.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 95,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    },
+    "coverageReporters": [
+      "html",
+      "text"
     ]
   },
   "proxy": "http://localhost:5000"
