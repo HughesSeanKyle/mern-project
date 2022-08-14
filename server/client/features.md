@@ -5,13 +5,13 @@
 - 2. Local State 
     - State is contained within a component and not shared with other components 
 
-<!-- Features -->
-# BackLog
+# Features
+## BackLog
 - Authentication
 - 1. `14/08/2022`
     - At a later stage implement federated signup and signin for fb, google and apple. For now, just focus on standard auth 
-# Ready for development
-# In Development
+## Ready for development
+## In Development
 - `NOTE! - VERY IMPORTANT`
     - Do this before developing further
         - Deploy to Heroku and set up a deployment pipeline with github actions 
@@ -21,16 +21,16 @@
         - Start with local form validation then move out to universal state as needed 
     - `14/08/2022 - Completed thus far`
         - Form validation on SignUp inputs and unit tests for SignUp 
-# Complete
+## Complete
  
-<!-- Bugs -->
-# BackLog
-# Ready for development
-# In Development 
-# Complete
+# Bugs
+## BackLog
+## Ready for development
+## In Development 
+## Complete
 
-<!-- Chores -->
-# BackLog
-# Ready for development
-# In Development 
-# Complete
+# Chores
+## BackLog
+## Ready for development
+## In Development 
+## Complete
