@@ -10,6 +10,9 @@
 - Authentication
 - 1. `14/08/2022`
     - At a later stage implement federated signup and signin for fb, google and apple. For now, just focus on standard auth 
+- 2. `16/08/2022`
+    - When calling routes client side refer to step 5 in below resource 
+        - `https://vivek-kaushal.medium.com/deploying-a-mern-web-app-to-heroku-b12c74c8b3c4`
 ## Ready for development
 ## In Development
 - `NOTE! - VERY IMPORTANT`
