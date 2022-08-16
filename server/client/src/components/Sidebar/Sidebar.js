@@ -18,7 +18,6 @@ import {
 import IconBox from 'components/Icons/IconBox';
 import { SimmmpleLogoWhite } from 'components/Icons/Icons';
 import { Separator } from 'components/Separator/Separator';
-import { SidebarHelp } from 'components/Sidebar/SidebarHelp';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -38,6 +37,7 @@ function Sidebar(props) {
 	};
 	// this function creates the links and collapses that appear in the sidebar (left menu)
 	const createLinks = (routes) => {
+		console.log('adminRoutes', adminRoutes);
 		const { sidebarVariant } = props;
 		// Chakra Color Mode
 		let activeBg = '#1A1F37';
@@ -190,7 +190,14 @@ function Sidebar(props) {
 	};
 	const { logoText, routes, sidebarVariant } = props;
 
-	var links = <>{createLinks(routes)}</>;
+	const adminRoutes = routes.filter((route) => route.layout === '/admin');
+	const authRoutes = routes.filter((route) => route.layout === '/auth');
+
+	let links = location.pathname.includes('/admin') ? (
+		<>{createLinks(adminRoutes)}</>
+	) : (
+		<>{createLinks(authRoutes)}</>
+	);
 	//  BRAND
 	//  Chakra Color Mode
 	let sidebarBg =
@@ -250,13 +257,13 @@ function Sidebar(props) {
 					<Stack direction="column" mb="40px">
 						<Box>{links}</Box>
 					</Stack>
-					<SidebarHelp></SidebarHelp>
 				</Box>
 			</Box>
 		</Box>
 	);
 }
 
+// SIDEBAR RESPONSIVE HERE ___________________________________________
 // FUNCTIONS
 
 export function SidebarResponsive(props) {
@@ -416,7 +423,14 @@ export function SidebarResponsive(props) {
 	};
 	const { logoText, routes, iconColor, ...rest } = props;
 
-	var links = <>{createLinks(routes)}</>;
+	const adminRoutes = routes.filter((route) => route.layout === '/admin');
+	const authRoutes = routes.filter((route) => route.layout === '/auth');
+
+	let links = location.pathname.includes('/admin') ? (
+		<>{createLinks(adminRoutes)}</>
+	) : (
+		<>{createLinks(authRoutes)}</>
+	);
 	//  BRAND
 	//  Chakra Color Mode
 	var brand = (
@@ -495,7 +509,6 @@ export function SidebarResponsive(props) {
 							<Stack direction="column" mb="40px">
 								<Box>{links}</Box>
 							</Stack>
-							<SidebarHelp></SidebarHelp>
 						</Box>
 					</DrawerBody>
 				</DrawerContent>

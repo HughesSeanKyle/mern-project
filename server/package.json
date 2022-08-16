@@ -2,10 +2,12 @@
   "name": "project",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon app",
+    "start": "node app",
+    "heroku-postbuild": "cd client && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon app",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
