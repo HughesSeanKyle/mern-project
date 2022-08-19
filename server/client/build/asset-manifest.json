@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/vision-ui-dashboard-chakra/static/css/main.31690426.css",
+    "main.js": "/vision-ui-dashboard-chakra/static/js/main.72b157b1.js",
+    "static/media/background-body-admin.png": "/vision-ui-dashboard-chakra/static/media/background-body-admin.9a5703c114bec6efe39b.png",
+    "static/media/signUpImage.png": "/vision-ui-dashboard-chakra/static/media/signUpImage.ce32c5768505cac270ef.png",
+    "static/media/signInImage.png": "/vision-ui-dashboard-chakra/static/media/signInImage.54090d1d6f00462e1f4b.png",
+    "static/media/billing-background-card.png": "/vision-ui-dashboard-chakra/static/media/billing-background-card.12071e802769d6f46e3e.png",
+    "static/media/avatar9.png": "/vision-ui-dashboard-chakra/static/media/avatar9.2db98189f85998b61c6b.png",
+    "static/media/cardimgfree.png": "/vision-ui-dashboard-chakra/static/media/cardimgfree.4372708864223c779858.png",
+    "static/media/avatar7.png": "/vision-ui-dashboard-chakra/static/media/avatar7.00e8f4f007f327b73e71.png",
+    "static/media/avatar10.png": "/vision-ui-dashboard-chakra/static/media/avatar10.1683e1c0cac6f333de9d.png",
+    "static/media/bgProfile.png": "/vision-ui-dashboard-chakra/static/media/bgProfile.d734b546dfd26a184fcb.png",
+    "static/media/avatar8.png": "/vision-ui-dashboard-chakra/static/media/avatar8.9719f14554a45416b270.png",
+    "static/media/ProjectImage3.png": "/vision-ui-dashboard-chakra/static/media/ProjectImage3.612b1c42b661baf74aea.png",
+    "static/media/ProjectImage1.png": "/vision-ui-dashboard-chakra/static/media/ProjectImage1.bed72a005437df70012f.png",
+    "static/media/ProjectImage2.png": "/vision-ui-dashboard-chakra/static/media/ProjectImage2.e33d8e1649b42af9731b.png",
+    "index.html": "/vision-ui-dashboard-chakra/index.html",
+    "main.31690426.css.map": "/vision-ui-dashboard-chakra/static/css/main.31690426.css.map",
+    "main.72b157b1.js.map": "/vision-ui-dashboard-chakra/static/js/main.72b157b1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.31690426.css",
+    "static/js/main.72b157b1.js"
+  ]
+}
